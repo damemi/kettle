@@ -1,2 +1,3 @@
-/home/pi/kettle-app/complete/src/main/java/hello/Application.java
-/home/pi/kettle-app/complete/src/main/java/hello/HelloController.java
+/home/mike/kettle/complete/src/main/java/hello/Application.java
+/home/mike/kettle/complete/src/main/java/hello/AlarmJob.java
+/home/mike/kettle/complete/src/main/java/hello/HelloController.java
