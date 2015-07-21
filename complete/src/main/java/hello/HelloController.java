@@ -41,7 +41,7 @@ public class HelloController {
 		int hour = jd.getIntValue("hour");
 		int minute = jd.getIntValue("minute");
 		String ampm = jd.getString("ampm");
-		return "{\"response\":\"True\",\"hour\":\""+hour+"\",\"minute\":"+minute+",\"ampm\":\""+ampm+"\"}";
+		return "{\"response\":\"True\",\"hour\":\""+hour+"\",\"minute\":\""+minute+"\",\"ampm\":\""+ampm+"\"}";
 	    }
 	} catch (SchedulerException e) {
 	    e.printStackTrace();
