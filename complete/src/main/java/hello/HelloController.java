@@ -11,6 +11,8 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.JobKey;
+import org.quartz.JobDataMap;
 //import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.SimpleTrigger;
@@ -20,22 +22,81 @@ import static org.quartz.TriggerBuilder.*;
 import static org.quartz.SimpleScheduleBuilder.*;
 import static org.quartz.DateBuilder.*;
 import java.util.*;
+import java.text.DateFormat;
 
 
 @RestController
 public class HelloController {
+
+    @RequestMapping(value = "/checkAlarm")
+	@ResponseBody
+	public String checkAlarm() {
+	
+	try {
+	    SchedulerFactory schFactory = new StdSchedulerFactory();
+	    Scheduler sch = schFactory.getScheduler();
+
+	    if(sch.checkExists(new JobKey("alarmJob"))) {
+		JobDataMap jd = sch.getJobDetail(new JobKey("alarmJob")).getJobDataMap();
+		int hour = jd.getIntValue("hour");
+		int minute = jd.getIntValue("minute");
+		String ampm = jd.getString("ampm");
+		return "{\"response\":\"True\",\"hour\":\""+hour+"\",\"minute\":"+minute+",\"ampm\":\""+ampm+"\"}";
+	    }
+	} catch (SchedulerException e) {
+	    e.printStackTrace();
+	}
+
+	return "{\"response\":\"False\"}";
+
+    }
+
+    @RequestMapping(value = "/stopAlarm")
+	@ResponseBody
+	public String stopAlarm() {
+	try {
+	    SchedulerFactory schFactory = new StdSchedulerFactory();
+	    Scheduler sch = schFactory.getScheduler();
+	    sch.start();
+	    sch.clear();
+	} catch (SchedulerException e) {
+	    e.printStackTrace();
+	}
+	return "{\"response\":\"True\"}";
+    }
     
     @RequestMapping(value = "/setAlarm/{hour}/{minute}/{ampm}")
 	@ResponseBody
-	public String setAlarm(@PathVariable("hour") String hour,
-			       @PathVariable("minute") String minute,
+	public String setAlarm(@PathVariable("hour") Integer hour,
+			       @PathVariable("minute") Integer minute,
 			       @PathVariable("ampm") String ampm) {
 
+	if(ampm.equals("PM")) {
+	    hour = hour + 12;
+	}
+
+	Calendar now = Calendar.getInstance();
+	Calendar alarmTime = Calendar.getInstance();
+	alarmTime.set(alarmTime.HOUR_OF_DAY, hour);
+	alarmTime.set(alarmTime.MINUTE, minute);
+	
+	if(now.after(alarmTime)) {
+	    alarmTime.add(alarmTime.DATE, 1);
+	}
+	
 	try {
+	    SchedulerFactory schFactory = new StdSchedulerFactory();
+	    Scheduler sch = schFactory.getScheduler();
+	    sch.start();
+	    sch.clear();
+
 	    long startTime = System.currentTimeMillis() + 10000L;
-	    Date myStart = new Date(startTime);
+	    Date myStart = alarmTime.getTime();
 	    JobDetail job = JobBuilder.newJob(AlarmJob.class)
 		.withIdentity("alarmJob")
+		.usingJobData("hour", hour)
+		.usingJobData("minute", minute)
+		.usingJobData("ampm", ampm)
 		.build();
 	
 	    SimpleTrigger trigger = (SimpleTrigger) newTrigger() 
@@ -44,14 +105,11 @@ public class HelloController {
 		.forJob("alarmJob")
 		.build();
 
-	    SchedulerFactory schFactory = new StdSchedulerFactory();
-	    Scheduler sch = schFactory.getScheduler();
-	    sch.start();
 	    sch.scheduleJob(job, trigger);
 	} catch (SchedulerException e) {
 	    e.printStackTrace();
 	}
-	return "True";
+	return "{\"response\":\"True\"}";
     }
 
     @RequestMapping("/on")

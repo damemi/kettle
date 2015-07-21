@@ -34,7 +34,8 @@
 
 <div class="row">
 <div class="col-md-4 col-xs-4 col-s-4">
-<select name="hour" class="form-control">
+<select name="hour" class="form-control" ng-model="hour">
+  <option>Hour</option>
   <option>1</option>
   <option>2</option>
   <option>3</option>
@@ -51,13 +52,14 @@
 </div>
 
 <div class="col-md-4 col-xs-4 col-s-4">
-<select name="minute" class="form-control">
+<select name="minute" class="form-control" ng-model="minute">
+  <option>Minute</option>
   <option ng-repeat="i in getNumber(60)">{{i}}</option>
 </select>
 </div>
 
 <div class="col-md-4 col-xs-4 col-s-4">
-<select name="ampm" class="form-control">
+<select name="ampm" class="form-control" ng-model="ampm">
   <option>AM</option>
   <option>PM</option>
 </select>
@@ -68,7 +70,10 @@
 
 <div class="row">
 <div class="col-md-12 col-xs-12 col-s-12">
-<button class="btn btn-large btn-block btn-info">Set alarm</button>
+<button ng-if="checkAlarm.status == 'False'" 
+	class="btn btn-large btn-block btn-info" ng-click="setAlarm()">Set alarm</button>
+<button ng-if="checkAlarm.status == 'True'"
+	class="btn btn-large btn-block btn-danger" ng-click="stopAlarm()">Stop alarm</button>
 </div>
 </div>
 
