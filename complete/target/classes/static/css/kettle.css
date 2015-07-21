@@ -1,0 +1,10 @@
+body,html {
+    background:#eee;
+    padding:5px;
+}
+
+.container-fluid {
+    background:#fff;
+    border:1px solid #aaa;
+    border-radius:5px;
+}

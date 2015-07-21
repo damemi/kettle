@@ -14,7 +14,7 @@ public class AlarmJob implements Job
 	JobDataMap dm = context.getJobDetail().getJobDataMap(); 
 	System.out.println("Hello Quartz!");
 	RestTemplate rt = new RestTemplate();
-	rt.getForObject("http://localhost:8080/on",String.class);
+	rt.getForObject("http://localhost/on",String.class);
  
     }
  
