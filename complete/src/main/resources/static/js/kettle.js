@@ -10,7 +10,11 @@ angular.module('kettleApp',[])
 	    $scope.checkAlarm.status = response.data.response;
 	    
 	    if(response.data.response == "True") {
-		$scope.hour = response.data.hour
+		if(response.data.hour > 12)
+		    $scope.hour = response.data.hour - 12
+		else
+		    $scope.hour = response.data.hour
+
 		$scope.ampm = response.data.ampm
 
 		if(response.data.minute < 10)
